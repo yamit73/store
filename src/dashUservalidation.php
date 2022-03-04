@@ -1,5 +1,4 @@
 <?php
-  //print_r($_SESSION['currentUser']);
   if(!isset($_SESSION['currentUser'])){
     header("location:index.php");
   }else{
