@@ -1,6 +1,7 @@
 <?php
     require_once("DB.php");
     class Helper extends DB{
+
         static public function signUp($userName,$userEmail,$userPassword,$userConfirmPassword){
             if(($userPassword==$userConfirmPassword) && $userEmail != "" && $userName != ""){
                 $usr =new User($userName,$userPassword,$userEmail);
@@ -41,6 +42,8 @@
             }
         }
 
+        //Admin queries
+        //query related to queries
         static function allUserDetails(){
             try{
                 $stmt = DB::getInstance()->query('SELECT id,email,name,role,password,permission FROM user WHERE role!="admin"');
@@ -79,9 +82,17 @@
         }
 
         //Products queries
+        static public function addProduct($productName, $productImage, $productCategory, $productSubCategory, $productPrice){
+            if($productName!="" && $productImage!="" && $productImage != "" && $productCategory != "" && $productSubCategory != "" && $productPrice != ""){
+                $pr =new Product($productName, $productImage, $productCategory, $productSubCategory, $productPrice);
+                $pr->addProduct();
+            }else{
+                echo"Fields should not be empty";
+            }
+        }
         static function getProducts(){
             try{
-                $stmt = DB::getInstance()->query('SELECT product_id, product_image, product_name, category, subcategory, price FROM products');
+                $stmt = DB::getInstance()->query('SELECT product_id, product_image, product_name, category, subcategory, price,list_price FROM products');
                 $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
                 return $result;
             }catch(PDOException $e){
@@ -108,6 +119,7 @@
                         <th scope="col">Category</th>
                         <th scope="col">Subcategory</th>
                         <th scope="col">Price</th>
+                        <th scope="col">List Price</th>
                         <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -121,6 +133,7 @@
                             <td>'.$value['category'].'</td>
                             <td>'.$value['subcategory'].'</td>
                             <td>'.$value['price'].'</td>
+                            <td>'.$value['list_price'].'</td>
                             <td>
                                 <a type="button" class="btn-sm btn-primary">Edit</a>&nbsp;
                                 <a type="button" href="?currentSection=Products&eAction=deleteProduct&prId='.$value['product_id'].'" class="btn-sm btn-danger">Delete</a>
@@ -270,19 +283,55 @@
             }
         }
 
-        static function searchAddProductSection(){
+        static function searchProductSection(){
             $html ='<form class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-12">
-                        <label class="visually-hidden" for="inlineFormInputGroupUsername">Search</label>
+                        <label class="visually-hidden" for="searchProduct">Search</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Enter id,name...">
+                            <input type="text" class="form-control" id="searchProduct" placeholder="Enter id,name...">
                         </div>
                         </div>
                         <div class="col-12">
                         <button type="button" class="btn btn-primary">Search</button>
                         </div>
+                    </form>';
+            return $html;
+        }
+
+        static function addProductSection(){
+            $html ='<form method="POST" class="row row-cols-lg-auto g-3 align-items-center mt-2">
+                        <div class="col-12 ">
+                            <label class="visually-hidden" for="productName">Product Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productName" id="productName" placeholder="Enter name">
+                            </div>
+                        </div>
                         <div class="col-12">
-                        <a class="btn btn-success" href="add-product.html">Add Product</a>
+                            <label class="visually-hidden" for="productImage">Product Image</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productImage" id="productImage" placeholder="Enter image name">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="visually-hidden" for="productName">Product Category</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productCategory" id="productCategory" placeholder="Enter category">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="visually-hidden" for="productSubCategory">productImage</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productSubCategory" id="productSubCategory" placeholder="Enter sub category">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="visually-hidden" for="productPrice">productImage</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productPrice" id="productPrice" placeholder="Enter image name">
+                            </div>
+                        </div>
+                            <div class="col-12">
+                            <button class="btn btn-success" name="eAction" value="addProduct">Add Product</button>
                         </div>
                     </form>';
             return $html;

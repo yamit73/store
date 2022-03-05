@@ -1,6 +1,7 @@
 <?php
   session_start();
-  require_once("./classes/helper.php");
+  require_once("../classes/products.php");
+  require_once("../classes/helper.php");
   require_once("dashUservalidation.php");
   $role=Helper::userRole();
   $id=$_SESSION['currentUser']['id'];
@@ -19,6 +20,16 @@
       if(isset($_REQUEST['prId'])){
         $prId=$_REQUEST['prId'];
       }
+      //product info
+      if($action=="addProduct"){
+        $productName=$_POST['productName'];
+        $productImage=$_POST['productImage'];
+        $productCategory=$_POST['productCategory'];
+        $productSubCategory=$_POST['productSubCategory'];
+        $productPrice=$_POST['productPrice'];
+      }
+      
+
       switch($action){
         case "approveUser":
           Helper::approveUser($eId);
@@ -31,6 +42,9 @@
           break;
         case "deleteProduct":
           Helper::deleteProduct($prId);
+          break;
+        case "addProduct":
+          Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productPrice);
           break;
       }
     }
@@ -113,7 +127,8 @@
       <?php 
 
         if($currentSection=="Products" && $role="admin"){
-          echo Helper::searchAddProductSection();
+          echo Helper::searchProductSection();
+          echo Helper::addProductSection();
         }
 
       ?>
