@@ -1,8 +1,24 @@
 <?php
-
     require_once("./requests/functions.php");
-    //print_r($_SESSION['currentUser']);
-
+    require_once("./classes/addtocart.php");
+    
+    if(isset($_REQUEST['action'])){
+        $action=$_REQUEST['action'];
+        switch($action){
+            case "logout":
+                session_unset();
+                header("location:index.php");
+                break;
+            case "addtoCart":
+                $prToCartId=$_REQUEST['prToCartId'];
+                Cart::addToCart($prToCartId);
+                break;
+            // case "search":
+            //     $searchtxt=$_POST['searchTxt'];
+            //     $searchedProducts=Functions::searchProducts($searchtxt);
+            //     break;
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,51 +34,6 @@
    
     <?php require_once("./components/header.php"); ?>
     
-    <div class="site-branding-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="logo">
-                        <h1><a href="./"><img src="img/logo.png"></a></h1>
-                    </div>
-                </div>
-                
-                <div class="col-sm-6">
-                    <div class="shopping-item">
-                        <a href="cart.html">Cart - <span class="cart-amunt">$100</span> <i class="fa fa-shopping-cart"></i> <span class="product-count">5</span></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> <!-- End site branding area -->
-    
-    <div class="mainmenu-area">
-        <div class="container">
-            <div class="row">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div> 
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="index.php">Home</a></li>
-                        <li class="active"><a href="shop.php">Shop page</a></li>
-                        <li><a href="single-product.php">Single product</a></li>
-                        <li><a href="cart.php">Cart</a></li>
-                        <li><a href="checkout.php">Checkout</a></li>
-                        <li><a href="#">Category</a></li>
-                        <li><a href="#">Others</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                </div>  
-            </div>
-        </div>
-    </div> <!-- End mainmenu area -->
-    
     <div class="product-big-title-area">
         <div class="container">
             <div class="row">
@@ -74,55 +45,52 @@
             </div>
         </div>
     </div>
-    
+    <form method="POST" class="row row-cols-lg-auto align-items-center w-75 m-auto mt-4">
+        <div class="col-lg-3 col-12">
+            <label class="visually-hidden" for="inlineFormSelectPref">Sort By</label>
+            <select class="form-select" id="inlineFormSelectPref">
+                <option name="sortBy" value="price">Price</option>
+                <option name="sortBy" value="recentelyAdded" selected>Recently Added</option>
+                <option name="sortBy" value="popularity">Popularity</option>
+            </select>
+        </div>
+
+        <div class="col-lg-6 col-12">
+            <label class="visually-hidden" for="inlineFormInputGroupUsername">Search</label>
+            <div class="input-group">
+            <input type="text" class="form-control" name="searchTxt" placeholder="Product name, Category, Subcategory">
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-12">
+            <button type="submit" name="action" value="search" class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
     
     <div class="single-product-area">
         <div class="zigzag-bottom"></div>
         <div class="container">
             <div class="row">
-                <div class="col-md-3 col-sm-6">
-                    <div class="single-shop-product">
-                        <div class="product-upper">
-                            <img src="img/product-2.jpg" alt="">
-                        </div>
-                        <h2><a href="">Apple new mac book 2015 March :P</a></h2>
-                        <div class="product-carousel-price">
-                            <ins>$899.00</ins> <del>$999.00</del>
-                        </div>  
-                        
-                        <div class="product-option-shop">
-                            <a class="add_to_cart_button" data-quantity="1" data-product_sku="" data-product_id="70" rel="nofollow" href="/canvas/shop/?add-to-cart=70">Add to cart</a>
-                        </div>                       
-                    </div>
-                </div>
 
-                <?php Functions::dynamicProductListing(); ?>
+                <?php
+                        $products=Helper::getProducts();
+                        Functions::dynamicProductListing($products);
+                 ?>
 
             </div>
             
             <div class="row">
                 <div class="col-md-12">
-                    <div class="product-pagination text-center">
-                        <nav>
-                          <ul class="pagination">
-                            <li>
-                              <a href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                              </a>
-                            </li>
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
-                            <li>
-                              <a href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                              </a>
-                            </li>
-                          </ul>
-                        </nav>                        
-                    </div>
+                <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+              </nav>
+          </div>
                 </div>
             </div>
         </div>
@@ -130,21 +98,6 @@
 
 
     <?php require_once("./components/footer.php"); ?>
-   
-    <!-- Latest jQuery form server -->
-    <script src="https://code.jquery.com/jquery.min.js"></script>
-    
-    <!-- Bootstrap JS form CDN -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    
-    <!-- jQuery sticky menu -->
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/jquery.sticky.js"></script>
-    
-    <!-- jQuery easing -->
-    <script src="js/jquery.easing.1.3.min.js"></script>
-    
-    <!-- Main Script -->
-    <script src="js/main.js"></script>
+    <?php require_once("./components/requiredFilesFooter.php"); ?>
   </body>
 </html>
