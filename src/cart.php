@@ -1,25 +1,24 @@
 <?php
-    require_once("./classes/addtocart.php");
-    //print_r($_SESSION['cart']);
-    if (isset($_REQUEST['action'])) {
-        $action = $_REQUEST['action'];
-        switch ($action) {
-            case "logout":
-                session_unset();
-                header("location:index.php");
-                break;
-            case "removeFromCart":
-                $remPrId = $_REQUEST['remPrId'];
-                Cart::removeFromCart($remPrId);
-                break;
-            // case "updateQuantity":
-            //     $updateQty = $_REQUEST['updateQty'];
-            //     $upId = $_REQUEST['upId'];
-            //     Cart::updateQuantityInCart($upId,$updateQty);
-            //     break;
-        }
-    }
 
+namespace App;
+
+session_start();
+require_once("./classes/addtocart.php");
+require_once("./requests/logout.php");
+if (isset($_REQUEST['action'])) {
+    $action = $_REQUEST['action'];
+    switch ($action) {
+        case "removeFromCart":
+            $remPrId = $_REQUEST['remPrId'];
+            Cart::removeFromCart($remPrId);
+            break;
+        // case "updateQuantity":
+        //     $updateQty = $_REQUEST['updateQty'];
+        //     $upId = $_REQUEST['upId'];
+        //     Cart::updateQuantityInCart($upId,$updateQty);
+        //     break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +71,7 @@
                                     <?php echo Cart::cartDisplay(); ?>
                                     <tr>
                                         <td class="actions" colspan="6">
-                                            <input type="submit" value="Checkout" name="proceed" class="checkout-button button alt wc-forward">
+                                            <a href="./checkout.php" class="btn btn-primary">Checkout</a>
                                         </td>
                                     </tr>
                                 </tbody>

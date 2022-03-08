@@ -1,15 +1,8 @@
 <?php
+namespace App;
 
-    //print_r($_SESSION['currentUser']);
-    if(isset($_REQUEST['action'])){
-        $action=$_REQUEST['action'];
-        switch($action){
-            case "logout":
-                session_unset();
-                header("location:index.php");
-        }
-    }
-  //print_r($_SESSION['cart'];
+session_start();
+require_once("./requests/logout.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +16,7 @@
   </head>
   <body>
    
-     <?php require_once("./components/header.php"); ?>
+        <?php require_once("./components/header.php"); ?>
 
     
     <div class="slider-area">

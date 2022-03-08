@@ -1,21 +1,21 @@
 <?php
-    require_once("./classes/User.php");
-    require_once("./classes/helper.php");
+namespace App;
 
-    if(isset($_POST['action'])){
-        $action=$_POST['action'];
-        $userName=$_POST['userName'];
-        $userEmail=$_POST['userEmail'];
-        $userPassword=$_POST['userPassword'];
-        $userConfirmPassword=$_POST['userConfirmPassword'];
-        switch($action){
-            case "signUp":
-                Helper::signUp($userName,$userEmail,$userPassword,$userConfirmPassword);
-                break;
-        }
+require_once("./classes/User.php");
+require_once("./classes/helper.php");
+
+if (isset($_POST['action'])) {
+    $action=$_POST['action'];
+    $userName=$_POST['userName'];
+    $userEmail=$_POST['userEmail'];
+    $userPassword=$_POST['userPassword'];
+    $userConfirmPassword=$_POST['userConfirmPassword'];
+    switch($action){
+        case "signUp":
+            Helper::signUp($userName, $userEmail, $userPassword, $userConfirmPassword);
+            break;
     }
-
-
+}
 ?>
 
 <!doctype html>
@@ -38,20 +38,20 @@
             <h1 class="h3 mb-3 fw-normal">Sign Up</h1>
 
             <div class="form-floating mt-3">
-                <input type="text" class="form-control" name="userName" id="userName" placeholder="Enter your name">
+                <input type="text" class="form-control" name="userName" id="userName" placeholder="Enter your name" required>
                 <label for="userName">Full Name</label>
             </div>
             <div class="form-floating mt-3">
-                <input type="email" class="form-control" name="userEmail" id="userEmail" placeholder="name@example.com">
+                <input type="email" class="form-control" name="userEmail" id="userEmail" placeholder="name@example.com" required>
                 <label for="userEmail">Email address</label>
             </div>
             <div class="form-floating mt-3">
                 <div class="form-floating mt-3">
-                    <input type="password" class="form-control" name="userPassword" id="userPassword" placeholder="Password">
+                    <input type="password" class="form-control" name="userPassword" id="userPassword" placeholder="Password" required>
                     <label for="userPassword">Password</label>
                 </div>
                 <div class="form-floating mt-3">
-                    <input type="password" class="form-control" name="userConfirmPassword" id="userConfirmPassword" placeholder="Confirm Password">
+                    <input type="password" class="form-control" name="userConfirmPassword" id="userConfirmPassword" placeholder="Confirm Password" required>
                     <label for="userConfirmPassword">Confirm Password</label>
                 </div>
                 <button class="w-100 btn btn-lg btn-primary" name="action" id="signUp" value="signUp" type="submit">Sign Up</button>
