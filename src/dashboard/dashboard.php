@@ -93,13 +93,16 @@ require_once("dashUservalidation.php");
                 <?php
                 if ($currentSection=="My-Profile") {
                     echo Helper::myProfile($id);
-                } elseif ($currentSection=="Users" && $role="admin") {
+                } elseif ($currentSection=="Users" && $role=="admin") {
                     echo Helper::allUsers();
-                } elseif ($currentSection=="Products" && $role="admin" && isset($searchedProducts)) {
+                } elseif ($currentSection=="Products" && $role=="admin" && isset($searchedProducts)) {
                     echo Helper::allproducts($searchedProducts);
-                } elseif ($currentSection=="Products" && $role="admin") {
+                } elseif ($currentSection=="Products" && $role=="admin") {
                     $products=Helper::getProducts($offset);
                     echo Helper::allproducts($products);
+                } elseif ($currentSection=="Orders" && $role=="admin") {
+                    $orders=Helper::getOrders();
+                    echo Helper::allOrders($orders);
                 }
                 ?>
             </table>

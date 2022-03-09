@@ -68,9 +68,15 @@ if (isset($_REQUEST['eAction'])) {
                 Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productListPrice, $productPrice);
                 break;
             case "search":
-                //echo $searchTxt;
                 $searchedProducts = Functions::searchProducts($searchTxt);
-                print_r($searchedProducts);
+                break;
+            case "approveOrder":
+                $orId=$_REQUEST['orId'];
+                Helper::approveOrder($orId);
+                break;
+            case "delivered":
+                $orId=$_REQUEST['orId'];
+                Helper::orderDelivered($orId);
                 break;
         }
     }
