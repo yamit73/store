@@ -1,69 +1,12 @@
 <?php
-  session_start();
-  require_once("../classes/products.php");
-  require_once("../classes/helper.php");
-  require_once("dashUservalidation.php");
-  $role=Helper::userRole();
-  $id=$_SESSION['currentUser']['id'];
-  $currentSection='';
+namespace App;
 
-  if(isset($_REQUEST['currentSection'])){
-    $currentSection=$_REQUEST['currentSection'];
-  }
-
-  if(isset($_REQUEST['eAction'])){
-    if($role="admin"){
-      $action=$_REQUEST['eAction'];
-      if(isset($_REQUEST['eId'])){
-        $eId=$_REQUEST['eId'];
-      }
-      if(isset($_REQUEST['prId'])){
-        $prId=$_REQUEST['prId'];
-      }
-      //product info
-      if($action=="addProduct"){
-        $target_file = "../img/". basename($_FILES["productImage"]["name"]);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-        $productImage='';
-        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" ) {
-          echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-          $uploadOk = 0;
-        }
-        if ($uploadOk != 0) {
-          if (move_uploaded_file($_FILES["productImage"]["tmp_name"], $target_file)) {
-            $productImage=basename( $_FILES["productImage"]["name"]);
-          } else {
-            echo "<small>Sorry, there was an error uploading your image</small>";
-          }
-        }
-        $productName=$_POST['productName'];
-        $productCategory=$_POST['productCategory'];
-        $productSubCategory=$_POST['productSubCategory'];
-        $productListPrice=$_POST['productListPrice'];
-        $productPrice=$_POST['productPrice'];
-      }
-      
-
-      switch($action){
-        case "approveUser":
-          Helper::approveUser($eId);
-          break;
-        case "blockUser":
-          Helper::blockUser($eId);
-          break;
-        case "deleteUser":
-          Helper::deleteUser($eId);
-          break;
-        case "deleteProduct":
-          Helper::deleteProduct($prId);
-          break;
-        case "addProduct":
-          Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productListPrice, $productPrice);
-          break;
-      }
-    }
-  }
+session_start();
+require_once("../classes/products.php");
+require_once("../classes/helper.php");
+require_once("../requests/functions.php");
+require_once("../requests/pagination.php");
+require_once("dashUservalidation.php");
 ?>
 <!doctype html>
 <html lang="en">
@@ -121,10 +64,10 @@
               <li class="nav-item">
                 <p class="nav-link active" aria-current="page" href="dashboard.php">
                   <span data-feather="home"></span>
-                  <?php echo Helper::userName(); ?>
+                    <?php echo Helper::userName(); ?>
                 </p>
               </li>
-              <?php echo Helper::dashboardSideNav($role);?>
+                <?php echo Helper::dashboardSideNav($role);?>
             </ul>        
           </div>
         </nav>
@@ -139,42 +82,56 @@
           </div>
 
           <h2><?php echo $currentSection; ?></h2>
-          <?php 
-
-            if($currentSection=="Products" && $role="admin"){
-              echo Helper::searchProductSection();
-              echo Helper::addProductSection();
+            <?php
+            if ($currentSection=="Products" && $role="admin") {
+                echo Helper::searchProductSection();
+                echo Helper::addProductSection();
             }
-
-          ?>
+            ?>
           <div class="table-responsive mt-4">
             <table class="table table-striped table-sm">
-
-                <?php 
-
-                  if($currentSection=="My-Profile"){
+                <?php
+                if ($currentSection=="My-Profile") {
                     echo Helper::myProfile($id);
-                  }else if($currentSection=="Users" && $role="admin"){
+                } elseif ($currentSection=="Users" && $role="admin") {
                     echo Helper::allUsers();
-                  }else if($currentSection=="Products" && $role="admin"){
-                    echo Helper::allproducts();
-                  }
-
+                } elseif ($currentSection=="Products" && $role="admin" && isset($searchedProducts)) {
+                    echo Helper::allproducts($searchedProducts);
+                } elseif ($currentSection=="Products" && $role="admin") {
+                    $products=Helper::getProducts($offset);
+                    echo Helper::allproducts($products);
+                }
                 ?>
-
             </table>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <?php 
-
-                if($currentSection=="My-Profile"&& $role="user"){
-                  echo Helper::userProfileEditForm();
+                <?php
+                if ($currentSection=="My-Profile"&& $role="user" && isset($_REQUEST['action'])&& $_REQUEST['action']=='editMyProfile') {
+                      echo Helper::userProfileEditForm();
                 }
-
-              ?>
+                ?>
             </div>
           </div>
+          <div class="col-md-12">
+            <?php
+            if (Helper::userRole()=='admin' && $_REQUEST['currentSection']=="Products") {
+                $pages='<nav aria-label="Page navigation">
+                          <ul class="pagination">';
+                        
+                if (isset($atpage) && $atpage>=2) {
+                    $pages.= '<li class="page-item"><a class="page-link" href="?currentSection=Products&atpage='.($atpage-1).'">Previous</a></li>';
+                }
+                $pages.=pagination();
+                if (isset($atpage) && $atpage<$noOfPages) {
+                    $pages.= '<li class="page-item"><a class="page-link" href="?currentSection=Products&atpage='.($atpage+1).'">Next</a></li>';
+                }
+                $pages.='</ul>
+                </nav>';
+                echo $pages;
+            }
+            ?>
+            </div>
         </main>
       </div>
     </div>
