@@ -82,9 +82,9 @@
         }
 
         //Products queries
-        static public function addProduct($productName, $productImage, $productCategory, $productSubCategory, $productPrice){
-            if($productName!="" && $productImage!="" && $productImage != "" && $productCategory != "" && $productSubCategory != "" && $productPrice != ""){
-                $pr =new Product($productName, $productImage, $productCategory, $productSubCategory, $productPrice);
+        static public function addProduct($productName, $productImage, $productCategory, $productSubCategory,$productListPrice, $productPrice){
+            if($productName!="" && $productImage!="" && $productImage != "" && $productCategory != "" && $productSubCategory != "" && $productPrice != "" && $productListPrice != ""){
+                $pr =new Product($productName, $productImage, $productCategory, $productSubCategory,$productListPrice, $productPrice);
                 $pr->addProduct();
             }else{
                 echo"Fields should not be empty";
@@ -299,7 +299,7 @@
         }
 
         static function addProductSection(){
-            $html ='<form method="POST" class="row row-cols-lg-auto g-3 align-items-center mt-2">
+            $html ='<form method="POST" class="row row-cols-lg-auto g-3 align-items-center mt-2" enctype="multipart/form-data">
                         <div class="col-12 ">
                             <label class="visually-hidden" for="productName">Product Name</label>
                             <div class="input-group">
@@ -309,7 +309,7 @@
                         <div class="col-12">
                             <label class="visually-hidden" for="productImage">Product Image</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="productImage" id="productImage" placeholder="Enter image name">
+                                <input type="file" class="form-control" name="productImage" id="productImage">
                             </div>
                         </div>
                         <div class="col-12">
@@ -325,9 +325,15 @@
                             </div>
                         </div>
                         <div class="col-12">
+                            <label class="visually-hidden" for="productListPrice">productImage</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="productListPrice" id="productListPrice" placeholder="Enter list price">
+                            </div>
+                        </div>
+                        <div class="col-12">
                             <label class="visually-hidden" for="productPrice">productImage</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="productPrice" id="productPrice" placeholder="Enter image name">
+                                <input type="text" class="form-control" name="productPrice" id="productPrice" placeholder="Enter list price">
                             </div>
                         </div>
                             <div class="col-12">

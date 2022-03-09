@@ -22,10 +22,25 @@
       }
       //product info
       if($action=="addProduct"){
+        $target_file = "../img/". basename($_FILES["productImage"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        $productImage='';
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" ) {
+          echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+          $uploadOk = 0;
+        }
+        if ($uploadOk != 0) {
+          if (move_uploaded_file($_FILES["productImage"]["tmp_name"], $target_file)) {
+            $productImage=basename( $_FILES["productImage"]["name"]);
+          } else {
+            echo "<small>Sorry, there was an error uploading your image</small>";
+          }
+        }
         $productName=$_POST['productName'];
-        $productImage=$_POST['productImage'];
         $productCategory=$_POST['productCategory'];
         $productSubCategory=$_POST['productSubCategory'];
+        $productListPrice=$_POST['productListPrice'];
         $productPrice=$_POST['productPrice'];
       }
       
@@ -44,7 +59,7 @@
           Helper::deleteProduct($prId);
           break;
         case "addProduct":
-          Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productPrice);
+          Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productListPrice, $productPrice);
           break;
       }
     }
@@ -85,84 +100,84 @@
   </head>
   <body>
     
-<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">CEDCOSS</a>
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-  <div class="navbar-nav">
-    <div class="nav-item text-nowrap">
-      <a class="nav-link px-3" href="?action=signOut">Sign out</a>
-    </div>
-  </div>
-</header>
-
-<div class="container-fluid">
-  <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-      <div class="position-sticky pt-3">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <p class="nav-link active" aria-current="page" href="dashboard.php">
-              <span data-feather="home"></span>
-              <?php echo Helper::userName(); ?>
-            </p>
-          </li>
-          <?php echo Helper::dashboardSideNav($role);?>
-        </ul>        
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">CEDCOSS</a>
+      <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+      <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+          <a class="nav-link px-3" href="?action=signOut">Sign out</a>
+        </div>
       </div>
-    </nav>
+    </header>
 
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <p></p>
+    <div class="container-fluid">
+      <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+          <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <p class="nav-link active" aria-current="page" href="dashboard.php">
+                  <span data-feather="home"></span>
+                  <?php echo Helper::userName(); ?>
+                </p>
+              </li>
+              <?php echo Helper::dashboardSideNav($role);?>
+            </ul>        
+          </div>
+        </nav>
 
-        <?php echo Helper::dashboardImportExportSection($role);?>
-        
-      </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <p></p>
 
-      <h2><?php echo $currentSection; ?></h2>
-      <?php 
+            <?php echo Helper::dashboardImportExportSection($role);?>
+            
+          </div>
 
-        if($currentSection=="Products" && $role="admin"){
-          echo Helper::searchProductSection();
-          echo Helper::addProductSection();
-        }
-
-      ?>
-      <div class="table-responsive mt-4">
-        <table class="table table-striped table-sm">
-
-            <?php 
-
-              if($currentSection=="My-Profile"){
-                echo Helper::myProfile($id);
-              }else if($currentSection=="Users" && $role="admin"){
-                echo Helper::allUsers();
-              }else if($currentSection=="Products" && $role="admin"){
-                echo Helper::allproducts();
-              }
-
-            ?>
-
-        </table>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-4">
+          <h2><?php echo $currentSection; ?></h2>
           <?php 
 
-            if($currentSection=="My-Profile"&& $role="user"){
-              echo Helper::userProfileEditForm();
+            if($currentSection=="Products" && $role="admin"){
+              echo Helper::searchProductSection();
+              echo Helper::addProductSection();
             }
 
           ?>
-        </div>
+          <div class="table-responsive mt-4">
+            <table class="table table-striped table-sm">
+
+                <?php 
+
+                  if($currentSection=="My-Profile"){
+                    echo Helper::myProfile($id);
+                  }else if($currentSection=="Users" && $role="admin"){
+                    echo Helper::allUsers();
+                  }else if($currentSection=="Products" && $role="admin"){
+                    echo Helper::allproducts();
+                  }
+
+                ?>
+
+            </table>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <?php 
+
+                if($currentSection=="My-Profile"&& $role="user"){
+                  echo Helper::userProfileEditForm();
+                }
+
+              ?>
+            </div>
+          </div>
+        </main>
       </div>
-    </main>
-  </div>
-</div>
+    </div>
 
 
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

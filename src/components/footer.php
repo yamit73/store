@@ -1,6 +1,4 @@
-<?php
-
-    echo '<div class="footer-top-area">
+<div class="footer-top-area">
             <div class="zigzag-bottom"></div>
             <div class="container">
                 <div class="row">
@@ -78,4 +76,4 @@
                     </div>
                 </div>
             </div>
-        </div>';
+        </div>
