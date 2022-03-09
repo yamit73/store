@@ -95,7 +95,7 @@ if (isset($_POST['sortBy'])) {
                             if (isset($atpage) && $atpage>=2) {
                                 echo '<li class="page-item"><a class="page-link" href="?atpage='.($atpage-1).'">Previous</a></li>';
                             }?>
-                                <?php pagination() ?>
+                                <?php echo pagination() ?>
                             <?php
                             if (isset($atpage) && $atpage<$noOfPages) {
                                 echo '<li class="page-item"><a class="page-link" href="?atpage='.($atpage+1).'">Next</a></li>';

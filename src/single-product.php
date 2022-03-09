@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+session_start();
 require_once("./requests/functions.php");
 $currentProduct = Functions::getCurrentProduct($_REQUEST['prId']);
 require_once("./requests/logout.php");

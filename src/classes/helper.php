@@ -4,7 +4,15 @@ namespace App;
 require_once("DB.php");
 class Helper extends DB
 {
-
+    /**
+     * To signup a user
+     *
+     * @param [type] $userName
+     * @param [type] $userEmail
+     * @param [type] $userPassword
+     * @param [type] $userConfirmPassword
+     * @return void
+     */
     public static function signUp($userName, $userEmail, $userPassword, $userConfirmPassword)
     {
         if (($userPassword==$userConfirmPassword) && $userEmail != "" && $userName != "") {
@@ -15,6 +23,13 @@ class Helper extends DB
         }
     }
 
+    /**
+     * To sign in a user
+     *
+     * @param [type] $userEmail
+     * @param [type] $userPassword
+     * @return void
+     */
     public static function signIn($userEmail, $userPassword)
     {
         if ($userEmail != "" && $userPassword != "") {
@@ -25,6 +40,11 @@ class Helper extends DB
         }
     }
 
+    /**
+     * To get name of the current user
+     *
+     * @return void
+     */
     public static function userName()
     {
         if (isset($_SESSION['currentUser'])) {
@@ -32,6 +52,11 @@ class Helper extends DB
         }
     }
 
+    /**
+     * To get role of user
+     *
+     * @return void
+     */
     public static function userRole()
     {
         if (isset($_SESSION['currentUser'])) {
@@ -39,6 +64,12 @@ class Helper extends DB
         }
     }
 
+    /**
+     * Current user details
+     *
+     * @param [type] $id
+     * @return void
+     */
     public static function currentUserDetails($id)
     {
         try {
@@ -52,6 +83,12 @@ class Helper extends DB
 
     //Admin queries
     //query related to queries
+
+    /**
+     * Get all the users from database
+     *
+     * @return void
+     */
     public static function allUserDetails()
     {
         try {
@@ -62,7 +99,12 @@ class Helper extends DB
             echo "Not exexuted user query ".$e;
         }
     }
-
+    /**
+     * To approve a user for login
+     *
+     * @param [type] $eId
+     * @return void
+     */
     public static function approveUser($eId)
     {
         try {
@@ -73,6 +115,12 @@ class Helper extends DB
         }
     }
 
+    /**
+     * To delete a user from user table
+     *
+     * @param [type] $eId
+     * @return void
+     */
     public static function deleteUser($eId)
     {
         try {
@@ -83,16 +131,28 @@ class Helper extends DB
         }
     }
 
+    /**
+     * To block a user from login
+     */
     public static function blockUser($eId)
     {
         try {
-            $stmt = DB::getInstance()->query('UPDATE user SET permission="blockeelsed" WHERE id='.$eId.'');
+            $stmt = DB::getInstance()->query('UPDATE user SET permission="blocked" WHERE id='.$eId.'');
             $stmt->execute();
         } catch (\PDOException $e) {
             echo "Not exexuted user query ".$e;
         }
     }
     
+    /**
+     * To edit user profile
+     *
+     * @param [type] $editMyProfileId
+     * @param [type] $newPassword
+     * @param [type] $newConfirmPassword
+     * @param [type] $newUserName
+     * @return void
+     */
     public static function editMyProfile($editMyProfileId, $newPassword, $newConfirmPassword, $newUserName)
     {
         if (($newPassword==$newConfirmPassword) && $newUserName != "") {
@@ -107,7 +167,20 @@ class Helper extends DB
             echo"Enter correct value";
         }
     }
+
     //Products queries
+
+    /**
+     * To add product in Product constructor
+     *
+     * @param [type] $productName
+     * @param [type] $productImage
+     * @param [type] $productCategory
+     * @param [type] $productSubCategory
+     * @param [type] $productListPrice
+     * @param [type] $productPrice
+     * @return void
+     */
     public static function addProduct($productName, $productImage, $productCategory, $productSubCategory, $productListPrice, $productPrice)
     {
         if ($productName!="" && $productImage!="" && $productImage != "" && $productCategory != "" && $productSubCategory != "" && $productPrice != "" && $productListPrice != "") {
@@ -117,6 +190,13 @@ class Helper extends DB
             echo"Fields should not be empty";
         }
     }
+
+    /**
+     * To get all the products in admin area
+     *
+     * @param [type] $offset
+     * @return void
+     */
     public static function getProducts($offset)
     {
         try {
@@ -127,7 +207,13 @@ class Helper extends DB
             echo "Not exexuted user query ".$e;
         }
     }
-
+    
+    /**
+     * To delete product form
+     *
+     * @param [type] $prId
+     * @return void
+     */
     public static function deleteProduct($prId)
     {
         try {
@@ -138,6 +224,114 @@ class Helper extends DB
         }
     }
 
+    /**
+     * Function to get orders in database
+     *
+     * @return array
+     */
+    public static function getOrders()
+    {
+        try {
+            $stmt = DB::getInstance()->query('SELECT * FROM orders');
+            $result=$stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+        } catch (\PDOException $e) {
+            echo "Not exexuted user query ".$e;
+        }
+    }
+
+    /**
+     * Fuction to approve the order
+     *
+     * @param [type] $orId
+     * @return void
+     */
+
+    public static function approveOrder($orId)
+    {
+        $date=date("Y-m-d");
+        try {
+            $stmt = DB::getInstance()->query('UPDATE orders SET status="approved", order_date="'.$date.'" WHERE order_id='.$orId.'');
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            echo "Not exexuted user query ".$e;
+        }
+    }
+    /**
+     * To mark status of order as delivered
+     *
+     * @param [type] $orId
+     * @return void
+     */
+    public static function orderDelivered($orId)
+    {
+        $date=date("Y-m-d");
+        try {
+            $stmt = DB::getInstance()->query('UPDATE orders SET status="delivered", delivery_date="'.$date.'" WHERE order_id='.$orId.'');
+            $stmt->execute();
+        } catch (\PDOException $e) {
+            echo "Not exexuted user query ".$e;
+        }
+    }
+
+    /**
+     * Function to display all orders of
+     *
+     * @param [type] $products
+     * @return html table
+     */
+    public static function allOrders($orders)
+    {
+        $head='<thead>
+                    <tr>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">User Id</th>
+                    <th scope="col">first Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Shipping Address Price</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Pin</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Delivery Date</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        $row='';
+        foreach ($orders as $key => $value) {
+            $row .=' <tr>
+                        <td>'.$value['order_id'].'</td>
+                        <td>'.$value['user_id'].'</td>
+                        <td>'.$value['first_name'].'</td>
+                        <td>'.$value['last_name'].'</td>
+                        <td>'.$value['email'].'</td>
+                        <td>'.$value['status'].'</td>
+                        <td>'.$value['shipping_address'].'</td>
+                        <td>'.$value['country'].'</td>
+                        <td>'.$value['state'].'</td>
+                        <td>'.$value['shipping_pincode'].'</td>
+                        <td>'.$value['order_date'].'</td>
+                        <td>'.$value['delivery_date'].'</td>';
+            if ($value['status']=='pending') {
+                $row .= '<td><a type="button" href="?currentSection=Orders&eAction=approveOrder&orId='.$value['order_id'].'" class="btn-sm btn-warning">Approve</a></td>
+                        </tr>';
+            } elseif ($value['status']=='approved') {
+                $row .= '<td><a type="button" href="?currentSection=Orders&eAction=delivered&orId='.$value['order_id'].'" class="btn-sm btn-success">Deliver</a></td>
+                        </tr>';
+            }
+                            
+        }
+                
+        return $head.$row."</tbody>";
+    }
+    /**
+     * To display all product to admin
+     *
+     * @param [type] $products
+     * @return void
+     */
     public static function allproducts($products)
     {
         $head='<thead>
@@ -164,7 +358,6 @@ class Helper extends DB
                         <td>'.$value['price'].'</td>
                         <td>'.$value['list_price'].'</td>
                         <td>
-                            <a type="button" class="btn-sm btn-primary">Edit</a>&nbsp;
                             <a type="button" href="?currentSection=Products&eAction=deleteProduct&prId='.$value['product_id'].'" class="btn-sm btn-danger">Delete</a>
                         </td>
                     </tr>';
@@ -173,7 +366,11 @@ class Helper extends DB
                 
         return $head.$row."</tbody>";
     }
-
+    /**
+     * To display all users to admin
+     *
+     * @return void
+     */
     public static function allUsers()
     {
         $users=self::allUserDetails();
@@ -211,6 +408,13 @@ class Helper extends DB
         return $head.$row."</tbody>";
     }
 
+    /**
+     * To display all profile of current user
+     *
+     * @param [type] $id
+     * @return void
+     */
+
     public static function myProfile($id)
     {
         $user=self::currentUserDetails($id);
@@ -239,6 +443,12 @@ class Helper extends DB
         return $profile;
     }
 
+    /**
+     * To display edit user form to user
+     *
+     * @return void
+     */
+
     public static function userProfileEditForm()
     {
         $form='<form class="form-inline" method="POST">
@@ -260,6 +470,12 @@ class Helper extends DB
         return $form;
     }
 
+    /**
+     * To display side nav to admin and user accordingly
+     *
+     * @param [type] $role
+     * @return void
+     */
     public static function dashboardSideNav($role)
     {
         $userNav='<li class="nav-item">
@@ -301,6 +517,12 @@ class Helper extends DB
         }
     }
 
+    /**
+     * Import export section when admin is logged in
+     *
+     * @param [type] $role
+     * @return void
+     */
     public static function dashboardImportExportSection($role)
     {
         $html='<div class="btn-toolbar mb-2 mb-md-0">
@@ -318,6 +540,11 @@ class Helper extends DB
         }
     }
 
+    /**
+     * Search product section to admin
+     *
+     * @return void
+     */
     public static function searchProductSection()
     {
         $html ='<form method="POST" class="row row-cols-lg-auto g-3 align-items-center">
@@ -334,6 +561,11 @@ class Helper extends DB
         return $html;
     }
 
+    /**
+     * Add product form to admin in products section
+     *
+     * @return void
+     */
     public static function addProductSection()
     {
         $html ='<form method="POST" class="row row-cols-lg-auto g-3 align-items-center mt-2" enctype="multipart/form-data">

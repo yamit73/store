@@ -5,26 +5,31 @@ session_start();
 //print_r($_SESSION['currentUser']);
 require_once("./requests/functions.php");
 require_once("./requests/logout.php");
+require_once("./classes/checkout.php");
 if (!isset($_SESSION['currentUser'])) {
     header("location:./login.php");
 }
+if (!isset($_SESSION['cart'])) {
+    echo "<script>alert('cart is empty')</script>";
+    header("location:./shop.php");
+}
 if (isset($_POST['action'])) {
     $action=$_POST['action'];
-    $orserDetails=[];
-    $firstName=$_POST['firstName'];
-    $lastName=$_POST['lastName'];
-    $username=$_POST['username'];
-    $email=$_POST['email'];
-    $address=$_POST['address'];
-    $address2=$_POST['address2'];
-    $country=$_POST['country'];
-    $state=$_POST['state'];
-    $zip=$_POST['zip'];
-    $country=$_POST['country'];
-    $country=$_POST['country'];
+    $orderDetails=[];
+    $orderDetails['firstName']=$_POST['firstName'];
+    $orderDetails['lastName']=$_POST['lastName'];
+    $orderDetails['email']=isset($_POST['address2'])?$_POST['email']:'';
+    $orderDetails['address']=$_POST['address'];
+    $orderDetails['address2']=isset($_POST['address2'])?$_POST['address2']:'';
+    $orderDetails['country']=$_POST['country'];
+    $orderDetails['state']=$_POST['state'];
+    $orderDetails['zip']=$_POST['zip'];
+    $check=new Checkout();
     switch ($action) {
         case "checkout":
-            //checkout();
+            $orderId= rand(1000, 100000000);
+            $orderDetails['orderId']=$orderId;
+            $check->checkout($orderDetails);
             break;
     }
 }
@@ -93,7 +98,7 @@ if (isset($_POST['action'])) {
                     </div>
                     <div class="col-md-7 col-lg-8">
                         <h4 class="mb-3">Billing address</h4>
-                        <form class="needs-validation">
+                        <form class="needs-validation" method="POST">
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="firstName" class="form-label">First name</label>
@@ -110,18 +115,6 @@ if (isset($_POST['action'])) {
                                         Valid last name is required.
                                     </div>
                                 </div>
-
-                                <div class="col-12">
-                                    <label for="username" class="form-label">Username</label>
-                                    <div class="input-group has-validation">
-                                        <span class="input-group-text">@</span>
-                                            <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
-                                        <div class="invalid-feedback">
-                                            Your username is required.
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="col-12">
                                     <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
                                     <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com">
