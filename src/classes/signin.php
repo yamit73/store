@@ -23,7 +23,11 @@
                         session_unset();
                     }else{
                         $_SESSION['currentUser']=$result;
-                        header("location:../dashboard.php");
+                        if($_SESSION['currentUser']['role']=="admin"){
+                            header("location:../dashboard/dashboard.php");
+                        }else{
+                            header("location:../index.php");
+                        }
                     }
                     //print_r($_SESSION['currentUser']);
                 }catch(PDOException $e){

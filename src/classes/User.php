@@ -19,7 +19,7 @@
             if(DB::getInstance()){
                 $user='INSERT INTO user (id,name,email,password) VALUES ('.$this->user_id.',"'.$this->username.'","'.$this->email.'","'.$this->password.'")';
                 if(DB::getInstance()->exec($user)){
-                    header("location:login.php");
+                    header("location:index.php");
                 }
             }
         }

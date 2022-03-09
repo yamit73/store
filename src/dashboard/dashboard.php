@@ -1,9 +1,54 @@
 <?php
   session_start();
-  require_once("./classes/helper.php");
+  require_once("../classes/products.php");
+  require_once("../classes/helper.php");
   require_once("dashUservalidation.php");
   $role=Helper::userRole();
-  
+  $id=$_SESSION['currentUser']['id'];
+  $currentSection='';
+
+  if(isset($_REQUEST['currentSection'])){
+    $currentSection=$_REQUEST['currentSection'];
+  }
+
+  if(isset($_REQUEST['eAction'])){
+    if($role="admin"){
+      $action=$_REQUEST['eAction'];
+      if(isset($_REQUEST['eId'])){
+        $eId=$_REQUEST['eId'];
+      }
+      if(isset($_REQUEST['prId'])){
+        $prId=$_REQUEST['prId'];
+      }
+      //product info
+      if($action=="addProduct"){
+        $productName=$_POST['productName'];
+        $productImage=$_POST['productImage'];
+        $productCategory=$_POST['productCategory'];
+        $productSubCategory=$_POST['productSubCategory'];
+        $productPrice=$_POST['productPrice'];
+      }
+      
+
+      switch($action){
+        case "approveUser":
+          Helper::approveUser($eId);
+          break;
+        case "blockUser":
+          Helper::blockUser($eId);
+          break;
+        case "deleteUser":
+          Helper::deleteUser($eId);
+          break;
+        case "deleteProduct":
+          Helper::deleteProduct($prId);
+          break;
+        case "addProduct":
+          Helper::addProduct($productName, $productImage, $productCategory, $productSubCategory, $productPrice);
+          break;
+      }
+    }
+  }
 ?>
 <!doctype html>
 <html lang="en">
@@ -36,9 +81,6 @@
         }
       }
     </style>
-
-    
-    <!-- Custom styles for this template -->
     <link href="./assets/css/dashboard.css" rel="stylesheet">
   </head>
   <body>
@@ -81,34 +123,42 @@
         
       </div>
 
-      <h2><?php if(isset($_REQUEST['currentSection'])){echo $_REQUEST['currentSection'];} ?></h2>
-      <div class="table-responsive">
+      <h2><?php echo $currentSection; ?></h2>
+      <?php 
+
+        if($currentSection=="Products" && $role="admin"){
+          echo Helper::searchProductSection();
+          echo Helper::addProductSection();
+        }
+
+      ?>
+      <div class="table-responsive mt-4">
         <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Password</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,001</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,002</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-          </tbody>
+
+            <?php 
+
+              if($currentSection=="My-Profile"){
+                echo Helper::myProfile($id);
+              }else if($currentSection=="Users" && $role="admin"){
+                echo Helper::allUsers();
+              }else if($currentSection=="Products" && $role="admin"){
+                echo Helper::allproducts();
+              }
+
+            ?>
+
         </table>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <?php 
+
+            if($currentSection=="My-Profile"&& $role="user"){
+              echo Helper::userProfileEditForm();
+            }
+
+          ?>
+        </div>
       </div>
     </main>
   </div>
