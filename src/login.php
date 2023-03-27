@@ -15,8 +15,6 @@ if (isset($_POST['action'])) {
             break;
     }
 }
-
-
 ?>
 
 <!doctype html>
