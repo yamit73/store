@@ -60,11 +60,7 @@ if (isset($_POST['action'])) {
                         Already have an account <a href="index.php">sign in</a>
                     </label>
                 </div>
-
         </form>
     </main>
-
 </body>
-
-
 </html>

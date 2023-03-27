@@ -5,7 +5,6 @@ require_once("config.php");
 class DB
 {
     public static $instance;
-
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
